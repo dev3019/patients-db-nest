@@ -1,14 +1,18 @@
-import moment from 'moment';
+import * as mongoose from 'mongoose';
 
-export class Patient {
+export const PatientSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  age: { type: Number, required: true },
+  issue: { type: String, required: true },
+  charge: { type: Number, required: true },
+  date: { type: Date, required: true },
+});
+
+export interface Patient {
+  id: number;
+  name: string;
+  age: number;
+  issue: string;
+  charge: number;
   date: Date;
-  constructor(
-    public id: number,
-    public name: string,
-    public age: number,
-    public issue: string,
-    public charge: number,
-  ) {
-    this.date = new Date();
-  }
 }

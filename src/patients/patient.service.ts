@@ -1,15 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { async } from 'rxjs';
 import { Patient } from './patient.model';
 
 @Injectable()
 export class PatientService {
   patients: Patient[] = []; //initialize as empty array
 
-  inserPatient(name: string, age: number, issue: string, charge: number) {
-    const pId = this.patients.length + 1;
-    const newPatient = new Patient(pId, name, age, issue, charge);
-    this.patients.push(newPatient);
-    return pId;
+  constructor(
+    @InjectModel('Patient') private readonly patientModel: Model<Patient>,
+  ) {}
+
+  async inserPatient(name: string, age: number, issue: string, charge: number) {
+    const newPatient = new this.patientModel({
+      name,
+      age,
+      issue,
+      charge,
+      date: new Date(),
+    });
+    const result = await newPatient.save();
+    console.log(result);
   }
 
   getPatients() {
