@@ -21,11 +21,19 @@ export class PatientService {
       date: new Date(),
     });
     const result = await newPatient.save();
-    console.log(result);
+    return result.id as number;
   }
 
-  getPatients() {
-    return [...this.patients];
+  async getPatients() {
+    const patients = await this.patientModel.find().exec();
+    return patients.map((patient) => ({
+      id: patient.id,
+      name: patient.name,
+      age: patient.age,
+      issue: patient.issue,
+      patient: patient.charge,
+      date: patient.date,
+    }));
   }
 
   getPatient(id: number) {

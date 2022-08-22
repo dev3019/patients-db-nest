@@ -14,20 +14,26 @@ import { PatientService } from './patient.service';
 export class PatientController {
   constructor(private readonly patientService: PatientService) {}
   @Post()
-  addPatient(
+  async addPatient(
     // @Body() completeBody: {name: string, age:string, issue: string, charge: string}
     @Body('name') name: string,
     @Body('age') age: number,
     @Body('issue') issue: string,
     @Body('charge') charge: number,
-  ): any {
-    const geneId = this.patientService.inserPatient(name, age, issue, charge);
+  ) {
+    const geneId = await this.patientService.inserPatient(
+      name,
+      age,
+      issue,
+      charge,
+    );
     return { generatedId: geneId };
   }
 
   @Get('getList')
-  getPatients() {
-    return this.patientService.getPatients();
+  async getPatients() {
+    const patients = await this.patientService.getPatients();
+    return patients;
   }
   @Get(':id')
   getPatient(@Param('id') id: number) {
