@@ -67,7 +67,10 @@ export class PatientService {
   }
 
   async deletePatient(id: number) {
-    await this.patientModel.deleteOne({_id:id}).exec()
+    const result = await this.patientModel.deleteOne({_id:id}).exec()
+    if(result.deletedCount===0){
+      throw new NotFoundException(`Could not find patient with the id ${id}`);
+    }
   }
 
   private setData(newData, oldData: Patient) {
