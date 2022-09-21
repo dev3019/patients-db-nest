@@ -68,9 +68,8 @@ export class PatientService {
     await patient.save();
   }
 
-  deletePatient(id: number) {
-    const patientIndex = this.findPatient(id)[1];
-    this.patients.splice(patientIndex, 1);
+  async deletePatient(id: number) {
+    await this.patientModel.deleteOne({_id:id}).exec()
   }
 
   private setData(newData, oldData: Patient) {
@@ -81,7 +80,7 @@ export class PatientService {
     return oldData;
   }
   private async findPatient(id: number): Promise<Patient> {
-    let patient;
+    let patient: Patient;
     try {
       patient = await this.patientModel.findById(id);
     } catch (error) {

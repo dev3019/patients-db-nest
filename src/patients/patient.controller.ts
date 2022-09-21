@@ -53,8 +53,8 @@ export class PatientController {
   }
 
   @Delete(':id')
-  deletePatient(@Param('id') id: number) {
-    this.patientService.deletePatient(id);
+  async deletePatient(@Param('id') id: number) {
+    await this.patientService.deletePatient(id);
     return null;
   }
 }
