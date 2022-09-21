@@ -8,7 +8,7 @@ export const PatientSchema = new mongoose.Schema({
   date: { type: Date, required: true },
 });
 
-export interface Patient {
+export interface Patient extends mongoose.Document{
   id: number;
   name: string;
   age: number;

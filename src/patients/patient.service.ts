@@ -1,15 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { async } from 'rxjs';
-import { Patient } from './patient.model';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { async } from "rxjs";
+import { Patient } from "./patient.model";
 
 @Injectable()
 export class PatientService {
   patients: Patient[] = []; //initialize as empty array
 
   constructor(
-    @InjectModel('Patient') private readonly patientModel: Model<Patient>,
+    @InjectModel("Patient") private readonly patientModel: Model<Patient>
   ) {}
 
   async inserPatient(name: string, age: number, issue: string, charge: number) {
@@ -36,29 +36,36 @@ export class PatientService {
     }));
   }
 
-  getPatient(id: number) {
-    const [patient] = this.findPatient(id);
-    return { ...patient };
+  async getPatient(id: number) {
+    const patient = await this.findPatient(id);
+    return {
+      id: patient.id,
+      name: patient.name,
+      age: patient.age,
+      issue: patient.issue,
+      charge: patient.charge,
+      date: patient.date,
+    };
   }
 
-  updatePatient(
+  async updatePatient(
     id: number,
     name: string,
     age: number,
     issue: string,
-    charge: number,
+    charge: number
   ) {
-    const [patient, patientIndex] = this.findPatient(id);
-    let newPatient = {
-      id: patientIndex + 1,
+    let patient = await this.findPatient(id);
+    const newPatient = {
+      id: patient.id,
       name,
       age,
       issue,
       charge,
       date: new Date(),
     };
-    newPatient = this.setData(newPatient, patient);
-    this.patients[patientIndex] = newPatient;
+    patient = this.setData(newPatient, patient);
+    await patient.save();
   }
 
   deletePatient(id: number) {
@@ -66,19 +73,23 @@ export class PatientService {
     this.patients.splice(patientIndex, 1);
   }
 
-  private setData(newData, oldData) {
-    if (!newData.name) newData.name = oldData.name;
-    if (!newData.age) newData.age = oldData.age;
-    if (!newData.issue) newData.issue = oldData.issue;
-    if (!newData.charge) newData.charge = oldData.charge;
-    return newData;
+  private setData(newData, oldData: Patient) {
+    if (newData.name) oldData.name = newData.name;
+    if (newData.age) oldData.age = newData.age;
+    if (newData.issue) oldData.issue = newData.issue;
+    if (newData.charge) oldData.charge = newData.charge;
+    return oldData;
   }
-  private findPatient(id: number): [Patient, number] {
-    const patientIndex = this.patients.findIndex((pati) => pati.id == id);
-    const patient = this.patients[patientIndex];
+  private async findPatient(id: number): Promise<Patient> {
+    let patient;
+    try {
+      patient = await this.patientModel.findById(id);
+    } catch (error) {
+      throw new NotFoundException(`Could not find patient with the id ${id}`);
+    }
     if (!patient) {
       throw new NotFoundException(`Could not find patient with the id ${id}`);
     }
-    return [patient, patientIndex];
+    return patient;
   }
 }

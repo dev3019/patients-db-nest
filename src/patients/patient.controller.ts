@@ -41,14 +41,14 @@ export class PatientController {
   }
 
   @Patch(':id')
-  updatePatient(
+  async updatePatient(
     @Param('id') id: number,
     @Body('name') name: string,
     @Body('age') age: number,
     @Body('issue') issue: string,
     @Body('charge') charge: number,
   ) {
-    this.patientService.updatePatient(id, name, age, issue, charge);
+    await this.patientService.updatePatient(id, name, age, issue, charge);
     return null;
   }
 
