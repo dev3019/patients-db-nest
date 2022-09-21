@@ -1,12 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { async } from "rxjs";
 import { Patient } from "./patient.model";
 
 @Injectable()
 export class PatientService {
-  patients: Patient[] = []; //initialize as empty array
 
   constructor(
     @InjectModel("Patient") private readonly patientModel: Model<Patient>

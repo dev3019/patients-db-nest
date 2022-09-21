@@ -7,7 +7,6 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
-import { Patient } from './patient.model';
 import { PatientService } from './patient.service';
 
 @Controller('patient')
